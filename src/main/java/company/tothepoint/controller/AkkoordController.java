@@ -31,9 +31,17 @@ public class AkkoordController {
     private OpdrachtRepository opdrachtRepository;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Akkoord>> getAllAkkoords() {
+    public ResponseEntity<List<Akkoord>> getAllAkkoords(@RequestParam(required = false) String consultantId) {
         LOG.debug("GET /akkoorden getAllAkkoords() called!");
-        return new ResponseEntity<>(akkoordRepository.findAll(), HttpStatus.OK);
+        if(consultantId != null){
+            Optional<List<Akkoord>> contractOption = Optional.ofNullable(akkoordRepository.findByConsultantId(consultantId));
+            return contractOption.map(akkoord ->
+                    new ResponseEntity<List<Akkoord>>(akkoord, HttpStatus.OK)
+            ).orElse(
+                    new ResponseEntity<List<Akkoord>>(HttpStatus.NOT_FOUND)
+            );
+        }
+        else{ return new ResponseEntity<List<Akkoord>>(akkoordRepository.findAll(), HttpStatus.OK);}
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
