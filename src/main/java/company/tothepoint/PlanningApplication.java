@@ -6,7 +6,6 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +17,8 @@ import org.springframework.context.annotation.Bean;
 @EnableDiscoveryClient
 public class PlanningApplication {
 	private static final String PLANNING_QUEUE = "planning-queue";
-	private static final String BEDIENDE_EXCHANGE = "bediende-exchange";
-	private static final String BEDIENDE_ROUTING = "bediende-routing";
+	private static final String CONTRACT_EXCHANGE = "contract-exchange";
+	private static final String CONTRACT_ROUTING = "contract-routing";
 
 	public static void main(String[] args) {
 		SpringApplication.run(PlanningApplication.class, args);
@@ -44,12 +43,12 @@ public class PlanningApplication {
 
 	@Bean
 	TopicExchange bediendeTopicExchange() {
-		return new TopicExchange(BEDIENDE_EXCHANGE, true, false);
+		return new TopicExchange(CONTRACT_EXCHANGE, true, false);
 	}
 
 	@Bean
 	Binding bediendeBinding(Queue queue, TopicExchange bediendeTopicExchange) {
-		return BindingBuilder.bind(queue).to(bediendeTopicExchange).with(BEDIENDE_ROUTING);
+		return BindingBuilder.bind(queue).to(bediendeTopicExchange).with(CONTRACT_ROUTING);
 	}
 
 	@Bean
