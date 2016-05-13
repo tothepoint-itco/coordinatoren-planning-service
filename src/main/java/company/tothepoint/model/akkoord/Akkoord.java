@@ -11,10 +11,9 @@ public class Akkoord {
     private String projectCode;
     private String opdrachtId;
     private String consultantId;
+    private String bezettingsGraad;
 
-    public String getOpdrachtId() {
-        return opdrachtId;
-    }
+
 
     private LocalDate informeelEindDatum;
     private LocalDate informeelStartDatum;
@@ -22,12 +21,17 @@ public class Akkoord {
     public Akkoord() {
     }
 
-    public Akkoord(String projectCode, String opdrachtId, String consultantId, LocalDate informeelEindDatum, LocalDate informeelStartDatum) {
+    public Akkoord(String projectCode, String opdrachtId, String consultantId, String bezettingsGraad, LocalDate informeelEindDatum, LocalDate informeelStartDatum) {
         this.projectCode = projectCode;
         this.opdrachtId = opdrachtId;
         this.consultantId = consultantId;
         this.informeelEindDatum = informeelEindDatum;
         this.informeelStartDatum = informeelStartDatum;
+        this.bezettingsGraad = bezettingsGraad;
+    }
+
+    public String getOpdrachtId() {
+        return opdrachtId;
     }
 
     public String getId() {
@@ -56,6 +60,14 @@ public class Akkoord {
 
     public void setConsultantId(String consultantId) {
         this.consultantId = consultantId;
+    }
+
+    public String getBezettingsGraad() {
+        return bezettingsGraad;
+    }
+
+    public void setBezettingsGraad(String bezettingsGraad) {
+        this.bezettingsGraad = bezettingsGraad;
     }
 
     public LocalDate getInformeelEindDatum() {
