@@ -41,8 +41,13 @@ public class BestelbonController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Bestelbon> createBestelbon(@RequestBody Bestelbon bestelbon) {
         LOG.debug("POST /bestelbonnen createBestelbon(..) called!");
-        Bestelbon createdBestelbon = bestelbonRepository.save(bestelbon);
-        return new ResponseEntity<>(createdBestelbon, HttpStatus.CREATED);
+
+        if (checkBestelbonValid(bestelbon)) {
+            Bestelbon createdBestelbon = bestelbonRepository.save(bestelbon);
+            return new ResponseEntity<>(createdBestelbon, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<Bestelbon>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
@@ -69,5 +74,9 @@ public class BestelbonController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private boolean checkBestelbonValid(Bestelbon bestelbon) {
+        return bestelbon.getStartDatum().isBefore(bestelbon.getEindDatum());
     }
 }

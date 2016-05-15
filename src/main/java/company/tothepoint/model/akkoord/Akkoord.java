@@ -21,7 +21,7 @@ public class Akkoord {
     public Akkoord() {
     }
 
-    public Akkoord(String projectCode, String opdrachtId, String consultantId, String bezettingsGraad, LocalDate informeelEindDatum, LocalDate informeelStartDatum) {
+    public Akkoord(String projectCode, String opdrachtId, String consultantId, String bezettingsGraad, LocalDate informeelStartDatum, LocalDate informeelEindDatum) {
         this.projectCode = projectCode;
         this.opdrachtId = opdrachtId;
         this.consultantId = consultantId;

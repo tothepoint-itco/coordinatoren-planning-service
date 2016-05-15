@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AkkoordRepository extends MongoRepository<Akkoord, String> {
     List<Akkoord> findByConsultantId(String consultantId);
+    List<Akkoord> findByOpdrachtId(String opdrachtId);
 }

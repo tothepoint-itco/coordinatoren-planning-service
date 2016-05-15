@@ -8,7 +8,6 @@ import company.tothepoint.repository.ConsultantRepository;
 import company.tothepoint.repository.OpdrachtRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/akkoorden")
@@ -60,12 +60,18 @@ public class AkkoordController {
     public ResponseEntity<Akkoord> createAkkoord(@RequestBody Akkoord akkoord) {
         LOG.debug("POST /akkoorden createAkkoord(..) called!");
 
-        Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(akkoord.getConsultantId()));
-        Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
+        Optional<Akkoord> validAkkoordOption = akkoordIsValid(akkoord) ? Optional.of(akkoord) : Optional.empty();
+        return validAkkoordOption.flatMap( akk -> {
+            Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(akkoord.getConsultantId()));
+            Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
 
-        return consultantOption.flatMap( consultant -> {
-            return opdrachtOption.map( opdracht -> {
-                return new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.CREATED);
+            return consultantOption.flatMap( consultant -> {
+                return opdrachtOption.flatMap( opdracht -> {
+                    List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId());
+                    Optional<Akkoord> akkoordOption = checkIfAkkoordIsWithingExistingAkkoordenRange(akkoord, akkoorden) ? Optional.empty() : Optional.of(akkoord);
+
+                    return akkoordOption.map(b -> new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.CREATED));
+                });
             });
         }).orElse( new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -75,13 +81,25 @@ public class AkkoordController {
         LOG.debug("PUT /akkoorden/"+id+" updateAkkoord("+id+", ..) called!");
         Optional<Akkoord> existingAkkoord = Optional.ofNullable(akkoordRepository.findOne(id));
 
-        return existingAkkoord.map(bu ->
-                {
-                    akkoord.setId(id);
-                    return new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.OK);
-                }
-        ).orElse(
-                new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        return existingAkkoord.map(bu -> {
+            akkoord.setId(id);
+
+            Optional<Akkoord> validAkkoordOption = akkoordIsValid(akkoord) ? Optional.of(akkoord) : Optional.empty();
+            return validAkkoordOption.flatMap( akk -> {
+                Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(akkoord.getConsultantId()));
+                Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
+
+                return consultantOption.flatMap( consultant -> {
+                    return opdrachtOption.flatMap( opdracht -> {
+                        List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId()).stream().filter(x -> x.getId() != akkoord.getId()).collect(Collectors.toList());
+                        Optional<Akkoord> akkoordOption = checkIfAkkoordIsWithingExistingAkkoordenRange(akkoord, akkoorden) ? Optional.empty() : Optional.of(akkoord);
+
+                        return akkoordOption.map(b -> new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.OK));
+                    });
+                });
+            }).orElse( new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        }).orElse(
+            new ResponseEntity<>(HttpStatus.NOT_FOUND)
         );
     }
 
@@ -94,5 +112,19 @@ public class AkkoordController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private boolean checkIfAkkoordIsWithingExistingAkkoordenRange(Akkoord akkoord, List<Akkoord> set) {
+        Optional<Akkoord> akkoordOption = set.stream().filter(a -> {
+            boolean r = (akkoord.getInformeelStartDatum().isBefore(a.getInformeelEindDatum()) && akkoord.getInformeelStartDatum().isAfter(a.getInformeelStartDatum()))
+                    || (akkoord.getInformeelEindDatum().isAfter(a.getInformeelStartDatum()) && akkoord.getInformeelEindDatum().isBefore(a.getInformeelEindDatum()));
+            return r;
+        }).findAny();
+
+        return akkoordOption.isPresent();
+    }
+
+    private boolean akkoordIsValid(Akkoord akkoord) {
+       return akkoord.getInformeelEindDatum().isAfter(akkoord.getInformeelStartDatum());
     }
 }
