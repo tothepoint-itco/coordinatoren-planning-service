@@ -1,6 +1,8 @@
 package company.tothepoint.model.akkoord;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -14,8 +16,9 @@ public class Akkoord {
     private String bezettingsGraad;
 
 
-
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelEindDatum;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelStartDatum;
 
     public Akkoord() {
