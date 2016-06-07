@@ -16,9 +16,7 @@ public class Akkoord {
     private String bezettingsGraad;
 
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelEindDatum;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelStartDatum;
 
     public Akkoord() {
@@ -73,18 +71,22 @@ public class Akkoord {
         this.bezettingsGraad = bezettingsGraad;
     }
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     public LocalDate getInformeelEindDatum() {
         return informeelEindDatum;
     }
 
+    @JsonFormat(pattern = "d/M/yyyy")
     public void setInformeelEindDatum(LocalDate informeelEindDatum) {
         this.informeelEindDatum = informeelEindDatum;
     }
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     public LocalDate getInformeelStartDatum() {
         return informeelStartDatum;
     }
 
+    @JsonFormat(pattern = "d/M/yyyy")
     public void setInformeelStartDatum(LocalDate informeelStartDatum) {
         this.informeelStartDatum = informeelStartDatum;
     }

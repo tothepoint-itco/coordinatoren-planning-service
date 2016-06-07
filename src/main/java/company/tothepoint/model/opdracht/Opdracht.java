@@ -12,10 +12,8 @@ public class Opdracht {
     private String locatie;
     private String tarief;
     private String accountManager;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
     private String klant;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate deadline;
     private String info;
 
@@ -64,10 +62,12 @@ public class Opdracht {
         this.accountManager = accountManager;
     }
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     public LocalDate getStartDatum() {
         return startDatum;
     }
 
+    @JsonFormat(pattern = "d/M/yyyy")
     public void setStartDatum(LocalDate startDatum) {
         this.startDatum = startDatum;
     }
@@ -80,10 +80,12 @@ public class Opdracht {
         this.klant = klant;
     }
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     public LocalDate getDeadline() {
         return deadline;
     }
 
+    @JsonFormat(pattern = "d/M/yyyy")
     public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
     }
