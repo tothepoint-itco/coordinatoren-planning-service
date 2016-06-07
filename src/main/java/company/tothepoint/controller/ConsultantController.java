@@ -40,7 +40,13 @@ public class ConsultantController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Consultant>> getAllConsultants() {
         LOG.debug("GET /consultants getAllConsultants() called!");
-        return new ResponseEntity<>(consultantRepository.findAll(), HttpStatus.OK);
+
+        List<Consultant> orderedConsultants = consultantRepository.findAll().stream()
+                .sorted((o1, o2) -> o1.getFamilieNaam().compareTo(o2.getFamilieNaam()))
+                .sorted(((o1, o2) -> o1.getVoorNaam().compareTo(o2.getVoorNaam())))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(orderedConsultants, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
