@@ -45,10 +45,10 @@ public class ConsultantController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ResponseEntity<Consultant> getConsultant(@PathVariable("id") String id) {
-        LOG.debug("GET /consultants/"+id+" getConsultant("+id+") called!");
+        LOG.debug("GET /consultants/" + id + " getConsultant(" + id + ") called!");
         Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(id));
 
-        return consultantOption.map(consultant->
+        return consultantOption.map(consultant ->
                 new ResponseEntity<>(consultant, HttpStatus.OK)
         ).orElse(
                 new ResponseEntity<>(HttpStatus.NOT_FOUND)
@@ -57,10 +57,13 @@ public class ConsultantController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/aggregated")
     public ResponseEntity<List<ConsultantAggregate>> getAllAggregatedConsultants() {
-        List<ConsultantAggregate> aggregatedConsultants = consultantRepository.findAll().stream().map(consultant -> {
-            return aggregateConsultant(consultant.getId());
-        }).filter(opt -> opt.isPresent())
-                .map(opt -> opt.get())
+        List<ConsultantAggregate> aggregatedConsultants = consultantRepository.findAll().stream()
+                .sorted((o1, o2) -> o1.getFamilieNaam().compareTo(o2.getFamilieNaam()))
+                .sorted(((o1, o2) -> o1.getVoorNaam().compareTo(o2.getVoorNaam())))
+                .map(consultant -> {
+                    return aggregateConsultant(consultant.getId());
+                }).filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
         return new ResponseEntity<List<ConsultantAggregate>>(aggregatedConsultants, HttpStatus.OK);
     }
@@ -68,25 +71,25 @@ public class ConsultantController {
     @RequestMapping(method = RequestMethod.GET, value = "/aggregated/{id}")
     public ResponseEntity<ConsultantAggregate> getAggregatedConsultant(@PathVariable("id") String id) {
         Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(id));
-        return consultantOption.flatMap(consultant-> {
-            return aggregateConsultant(consultant.getId()).map( aggregatedConsultant -> {
+        return consultantOption.flatMap(consultant -> {
+            return aggregateConsultant(consultant.getId()).map(aggregatedConsultant -> {
                 return new ResponseEntity<>(aggregatedConsultant, HttpStatus.OK);
             });
         }).orElse(
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                new ResponseEntity<>(HttpStatus.NOT_FOUND)
         );
     }
 
     private Optional<ConsultantAggregate> aggregateConsultant(String consultantId) {
         Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(consultantId));
 
-        return consultantOption.map( consultant -> {
+        return consultantOption.map(consultant -> {
             List<Akkoord> akkoorden = akkoordRepository.findByConsultantId(consultantId);
 
-            List<AkkoordAggregate> akkoordAggregates = akkoorden.stream().map( akkoord -> {
+            List<AkkoordAggregate> akkoordAggregates = akkoorden.stream().map(akkoord -> {
                 return aggregateAkkoord(akkoord.getId());
-            }).filter(akkoordOption -> akkoordOption.isPresent())
-                    .map(akkoordOption -> akkoordOption.get())
+            }).filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
 
             return new ConsultantAggregate(consultant, akkoordAggregates);
@@ -95,9 +98,9 @@ public class ConsultantController {
 
     private Optional<AkkoordAggregate> aggregateAkkoord(String akkoordId) {
         Optional<Akkoord> akkoordOption = Optional.ofNullable(akkoordRepository.findOne(akkoordId));
-        return akkoordOption.flatMap( akkoord -> {
+        return akkoordOption.flatMap(akkoord -> {
             Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
-            return opdrachtOption.map( opdracht -> {
+            return opdrachtOption.map(opdracht -> {
                 List<Bestelbon> bestelbonnen = bestelbonRepository.findByProjectCode(akkoord.getProjectCode());
                 return new AkkoordAggregate(akkoord, opdracht, bestelbonnen);
             });
