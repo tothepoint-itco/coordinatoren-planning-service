@@ -1,5 +1,6 @@
 package company.tothepoint.model.bestelbon;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
@@ -10,7 +11,9 @@ public class Bestelbon {
 
     private String projectCode;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate eindDatum;
 
     public Bestelbon() {

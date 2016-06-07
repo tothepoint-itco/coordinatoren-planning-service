@@ -1,5 +1,6 @@
 package company.tothepoint.model.opdracht;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
@@ -11,8 +12,10 @@ public class Opdracht {
     private String locatie;
     private String tarief;
     private String accountManager;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
     private String klant;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate deadline;
     private String info;
 
