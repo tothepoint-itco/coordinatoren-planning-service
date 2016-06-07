@@ -12,10 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -23,6 +26,8 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 public class AkkoordControllerTest {
+    private static final Logger LOG = LoggerFactory.getLogger(AkkoordControllerTest.class);
+
     @InjectMocks
     private AkkoordController akkoordController;
 
@@ -47,8 +52,9 @@ public class AkkoordControllerTest {
         final String CONS_ID = "cons-id";
         final String OPDR_ID = "opdr-id";
         final String BEZETTING = "100";
-        final LocalDate START_DATE = LocalDate.of(1993,8,29);
-        final LocalDate END_DATE = LocalDate.of(2016,8,29);
+        DateTimeFormatter oldFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        final LocalDate START_DATE = LocalDate.parse("29-08-1993", oldFormat);
+        final LocalDate END_DATE = LocalDate.parse("29-08-2016", oldFormat);
 
         Akkoord akkoordToCreate = new Akkoord(PROJ_CODE, OPDR_ID, CONS_ID, BEZETTING, START_DATE, END_DATE);
 

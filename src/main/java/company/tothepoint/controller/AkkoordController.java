@@ -13,6 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,12 +69,10 @@ public class AkkoordController {
         return validAkkoordOption.flatMap( akk -> {
             Optional<Consultant> consultantOption = Optional.ofNullable(consultantRepository.findOne(akkoord.getConsultantId()));
             Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
-
             return consultantOption.flatMap( consultant -> {
                 return opdrachtOption.flatMap( opdracht -> {
                     List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId());
                     Optional<Akkoord> akkoordOption = checkIfAkkoordIsWithingExistingAkkoordenRange(akkoord, akkoorden) ? Optional.empty() : Optional.of(akkoord);
-
                     return akkoordOption.map(b -> new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.CREATED));
                 });
             });
