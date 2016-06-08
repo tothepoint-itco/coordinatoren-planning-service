@@ -222,6 +222,35 @@ public class AkkoordControllerTest {
         assertThat(actualResult, new ReflectionEquals(expectedResult));
     }
 
+    @Test
+    public void createAkkoordDateWithinExistingDatesForOtherConsultant() {
+        final String PROJ_CODE = "proj-code";
+        final String CONS_ID = "cons-id";
+        final String OPDR_ID = "opdr-id";
+        final String BEZETTING = "100";
+
+        Akkoord existingAkkoord1 = new Akkoord(PROJ_CODE, OPDR_ID, CONS_ID, BEZETTING, LocalDate.of(2000, 1, 1), LocalDate.of(2000, 3, 1));
+        Akkoord existingAkkoord2 = new Akkoord(PROJ_CODE, OPDR_ID, CONS_ID, BEZETTING, LocalDate.of(2000, 5, 1), LocalDate.of(2000, 8, 1));
+
+        Akkoord akkoordToCreate = new Akkoord(PROJ_CODE, OPDR_ID, "other-cons-id", BEZETTING, LocalDate.of(2000, 2, 1), LocalDate.of(2000, 4, 1));
+        Akkoord akkoordToReturn = new Akkoord(PROJ_CODE, OPDR_ID, "other-cons-id", BEZETTING, LocalDate.of(2000, 2, 1), LocalDate.of(2000, 4, 1));
+        akkoordToReturn.setId("some-id");
+
+        when(akkoordRepository.findByOpdrachtId(OPDR_ID)).thenReturn(Arrays.asList(existingAkkoord1, existingAkkoord2));
+        when(consultantRepository.findOne(CONS_ID)).thenReturn(new Consultant());
+        when(consultantRepository.findOne("other-cons-id")).thenReturn(new Consultant());
+        when(opdrachtRepository.findOne(OPDR_ID)).thenReturn(new Opdracht());
+        when(akkoordRepository.save(akkoordToCreate)).thenReturn(akkoordToReturn);
+
+        ResponseEntity<Akkoord> expectedResult = new ResponseEntity<Akkoord>(akkoordToReturn, HttpStatus.CREATED);
+        ResponseEntity<Akkoord> actualResult = akkoordController.createAkkoord(akkoordToCreate);
+
+        verify(akkoordRepository, times(1)).save(akkoordToCreate);
+
+        assertThat(actualResult, new ReflectionEquals(expectedResult, "body"));
+        assertThat(actualResult.getBody(), new ReflectionEquals(akkoordToReturn));
+    }
+
 
     @Test
     public void updateAkkoord() {

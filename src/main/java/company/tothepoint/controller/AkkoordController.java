@@ -71,7 +71,9 @@ public class AkkoordController {
             Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
             return consultantOption.flatMap( consultant -> {
                 return opdrachtOption.flatMap( opdracht -> {
-                    List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId());
+                    List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId()).stream()
+                            .filter(x -> x.getConsultantId() == akkoord.getConsultantId())
+                            .collect(Collectors.toList());
                     Optional<Akkoord> akkoordOption = checkIfAkkoordIsWithingExistingAkkoordenRange(akkoord, akkoorden) ? Optional.empty() : Optional.of(akkoord);
                     return akkoordOption.map(b -> new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.CREATED));
                 });
@@ -94,7 +96,10 @@ public class AkkoordController {
 
                 return consultantOption.flatMap( consultant -> {
                     return opdrachtOption.flatMap( opdracht -> {
-                        List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId()).stream().filter(x -> x.getId() != akkoord.getId()).collect(Collectors.toList());
+                        List<Akkoord> akkoorden = akkoordRepository.findByOpdrachtId(akkoord.getOpdrachtId()).stream()
+                                .filter(x -> x.getId() != akkoord.getId())
+                                .filter(x -> x.getConsultantId() == akkoord.getConsultantId())
+                                .collect(Collectors.toList());
                         Optional<Akkoord> akkoordOption = checkIfAkkoordIsWithingExistingAkkoordenRange(akkoord, akkoorden) ? Optional.empty() : Optional.of(akkoord);
 
                         return akkoordOption.map(b -> new ResponseEntity<>(akkoordRepository.save(akkoord), HttpStatus.OK));
