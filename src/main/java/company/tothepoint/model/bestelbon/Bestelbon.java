@@ -10,7 +10,8 @@ public class Bestelbon {
     private String id;
 
     private String projectCode;
-
+    private String klant;
+    private String akkoordId;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -19,10 +20,27 @@ public class Bestelbon {
     public Bestelbon() {
     }
 
-    public Bestelbon(String projectCode, LocalDate startDatum, LocalDate eindDatum) {
+    public Bestelbon(String projectCode, LocalDate startDatum, LocalDate eindDatum, String klant, String consultantId, String akkoordId) {
         this.projectCode = projectCode;
         this.startDatum = startDatum;
         this.eindDatum = eindDatum;
+        this.klant = klant;
+        this.akkoordId = akkoordId;
+    }
+
+    public String getAkkoordId() {
+        return akkoordId;
+    }
+    public void setAkkoordId(String akkoordId) {
+        this.akkoordId = akkoordId;
+    }
+
+    public String getKlant() {
+        return klant;
+    }
+
+    public void setKlant(String klant) {
+        this.klant = klant;
     }
 
     public String getId() {

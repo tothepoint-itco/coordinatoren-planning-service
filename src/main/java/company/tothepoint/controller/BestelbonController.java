@@ -1,7 +1,11 @@
 package company.tothepoint.controller;
 
+import company.tothepoint.model.akkoord.Akkoord;
 import company.tothepoint.model.bestelbon.*;
+import company.tothepoint.model.consultant.Consultant;
+import company.tothepoint.repository.AkkoordRepository;
 import company.tothepoint.repository.BestelbonRepository;
+import company.tothepoint.repository.ConsultantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,6 +23,10 @@ public class BestelbonController {
     private static final Logger LOG = LoggerFactory.getLogger(BestelbonController.class);
     @Autowired
     private BestelbonRepository bestelbonRepository;
+    @Autowired
+    private ConsultantRepository consultantRepository;
+    @Autowired
+    private AkkoordRepository akkoordRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Bestelbon>> getAllBestelbons() {
@@ -41,8 +49,10 @@ public class BestelbonController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Bestelbon> createBestelbon(@RequestBody Bestelbon bestelbon) {
         LOG.debug("POST /bestelbonnen createBestelbon(..) called!");
+        Optional<Akkoord> existingAkkoord= Optional.ofNullable(akkoordRepository.findOne(bestelbon.getAkkoordId()));
 
-        if (checkBestelbonValid(bestelbon)) {
+        if (checkBestelbonValid(bestelbon)  && checkIfAkkoordExist(existingAkkoord)) {
+            LOG.debug("If check complete existingConsultant is"+"And existingAkkoord is"+existingAkkoord);
             Bestelbon createdBestelbon = bestelbonRepository.save(bestelbon);
             return new ResponseEntity<>(createdBestelbon, HttpStatus.CREATED);
         } else {
@@ -54,7 +64,6 @@ public class BestelbonController {
     public ResponseEntity<Bestelbon> updateBestelbon(@PathVariable("id") String id, @RequestBody Bestelbon bestelbon) {
         LOG.debug("PUT /bestelbonnen/"+id+" updateBestelbon("+id+", ..) called!");
         Optional<Bestelbon> existingBestelbon = Optional.ofNullable(bestelbonRepository.findOne(id));
-
         return existingBestelbon.map(bu ->
                 {
                     bestelbon.setId(id);
@@ -78,5 +87,13 @@ public class BestelbonController {
 
     private boolean checkBestelbonValid(Bestelbon bestelbon) {
         return bestelbon.getStartDatum().isBefore(bestelbon.getEindDatum());
+    }
+
+    private boolean checkIfAkkoordExist(Optional<Akkoord> akkoord){
+        return akkoord.map( exist ->
+                true
+        ).orElse(
+                false
+        );
     }
 }
