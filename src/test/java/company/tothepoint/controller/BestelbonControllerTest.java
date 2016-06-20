@@ -45,16 +45,14 @@ public class BestelbonControllerTest {
 
     @Test
     public void createBestelbonTest() {
-        String projectCode = "projectCode";
         LocalDate startDatum = LocalDate.of(1993, 8, 29);
         LocalDate eindDatum = LocalDate.of(2016, 8, 29);
-        String klant = "Kind en Gezin";
-        String consultantId = "111";
+        //String consultantId = "111";
         String akkoordId = "222";
 
-        Bestelbon bestelbonToCreate = new Bestelbon(projectCode, startDatum, eindDatum, klant, consultantId, akkoordId);
+        Bestelbon bestelbonToCreate = new Bestelbon(startDatum, eindDatum, akkoordId);
 
-        Bestelbon bestelbonToReturn = new Bestelbon(projectCode, startDatum, eindDatum, klant, consultantId, akkoordId);
+        Bestelbon bestelbonToReturn = new Bestelbon(startDatum, eindDatum,akkoordId);
         bestelbonToReturn.setId("some-id");
 
         when(akkoordRepository.findOne("222")).thenReturn(new Akkoord());
@@ -70,14 +68,12 @@ public class BestelbonControllerTest {
     }
     @Test
     public void createBestelbonWithWrongAkkoordAndConsultantTest() {
-        String projectCode = "projectCode";
         LocalDate startDatum = LocalDate.of(1993, 8, 29);
         LocalDate eindDatum = LocalDate.of(2016, 8, 29);
-        String klant = "Kind en Gezin";
-        String consultantId = "111";
+        //String consultantId = "111";
         String akkoordId = "222";
 
-        Bestelbon bestelbonToCreate = new Bestelbon(projectCode, startDatum, eindDatum, klant, consultantId, akkoordId);
+        Bestelbon bestelbonToCreate = new Bestelbon(startDatum, eindDatum, akkoordId);
         when(akkoordRepository.findOne("222")).thenReturn(null);
 
         ResponseEntity<Bestelbon> expectedResult = new ResponseEntity<Bestelbon>(HttpStatus.BAD_REQUEST);
@@ -90,14 +86,12 @@ public class BestelbonControllerTest {
 
     @Test
     public void startDateShouldBeforeEndDateOnCreation() {
-        String projectCode = "projectCode";
         LocalDate eindDatum = LocalDate.of(1993, 8, 29);
         LocalDate startDatum = LocalDate.of(2016, 8, 29);
-        String klant = "Kind en Gezin";
-        String consultantId = "0001";
+//        String consultantId = "0001";
         String akkoordId = "010101";
 
-        Bestelbon bestelbonToCreate = new Bestelbon(projectCode, startDatum, eindDatum, klant, consultantId, akkoordId);
+        Bestelbon bestelbonToCreate = new Bestelbon(startDatum, eindDatum, akkoordId);
 
         ResponseEntity<Bestelbon> expectedResult = new ResponseEntity<Bestelbon>(HttpStatus.BAD_REQUEST);
         ResponseEntity<Bestelbon> actualResult = bestelbonController.createBestelbon(bestelbonToCreate);
