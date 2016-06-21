@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +45,20 @@ public class AkkoordController {
         else{ return new ResponseEntity<List<Akkoord>>(akkoordRepository.findAll(), HttpStatus.OK);}
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/aggregated")
+    public ResponseEntity<List<AkkoordAggregate>> getAllAkkoordsAggregated() {
+        List<AkkoordAggregate> akkoordAggregates = akkoordRepository.findAll().stream()
+                .map(akkoord ->
+                    Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId())).map(opdracht ->
+                        new AkkoordAggregate(akkoord, opdracht, Collections.emptyList())
+                    )
+                )
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        return new ResponseEntity<List<AkkoordAggregate>>(akkoordAggregates, HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ResponseEntity<Akkoord> getAkkoord(@PathVariable("id") String id) {
         LOG.debug("GET /akkoorden/"+id+" getAkkoord("+id+") called!");
@@ -53,6 +68,21 @@ public class AkkoordController {
                 new ResponseEntity<>(akkoord, HttpStatus.OK)
         ).orElse(
                 new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        );
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/aggregated/{id}")
+    public ResponseEntity<AkkoordAggregate> getAkkoordAggregated(@PathVariable("id") String id) {
+        Optional<Akkoord> akkoordOptional = Optional.ofNullable(akkoordRepository.findOne(id));
+
+        return akkoordOptional.flatMap(akkoord ->
+            Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId())).map(opdracht ->
+                new AkkoordAggregate(akkoord, opdracht, Collections.emptyList())
+            )
+        ).map(akkoordAggregate ->
+            new ResponseEntity<AkkoordAggregate>(akkoordAggregate, HttpStatus.OK)
+        ).orElse(
+                new ResponseEntity<AkkoordAggregate>(HttpStatus.NOT_FOUND)
         );
     }
 
