@@ -2,13 +2,11 @@ package company.tothepoint.controller;
 
 import company.tothepoint.model.akkoord.Akkoord;
 import company.tothepoint.model.bestelbon.*;
-import company.tothepoint.model.consultant.Consultant;
 import company.tothepoint.repository.AkkoordRepository;
 import company.tothepoint.repository.BestelbonRepository;
 import company.tothepoint.repository.ConsultantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +21,6 @@ public class BestelbonController {
     private static final Logger LOG = LoggerFactory.getLogger(BestelbonController.class);
     @Autowired
     private BestelbonRepository bestelbonRepository;
-    @Autowired
-    private ConsultantRepository consultantRepository;
     @Autowired
     private AkkoordRepository akkoordRepository;
 
