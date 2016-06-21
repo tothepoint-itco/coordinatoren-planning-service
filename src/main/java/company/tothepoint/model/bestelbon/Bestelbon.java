@@ -8,9 +8,7 @@ import java.time.LocalDate;
 public class Bestelbon {
     @Id
     private String id;
-
-    private String projectCode;
-
+    private String akkoordId;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -19,11 +17,19 @@ public class Bestelbon {
     public Bestelbon() {
     }
 
-    public Bestelbon(String projectCode, LocalDate startDatum, LocalDate eindDatum) {
-        this.projectCode = projectCode;
+    public Bestelbon(LocalDate startDatum, LocalDate eindDatum,  String akkoordId) {
         this.startDatum = startDatum;
         this.eindDatum = eindDatum;
+        this.akkoordId = akkoordId;
     }
+
+    public String getAkkoordId() {
+        return akkoordId;
+    }
+    public void setAkkoordId(String akkoordId) {
+        this.akkoordId = akkoordId;
+    }
+
 
     public String getId() {
         return id;
@@ -31,14 +37,6 @@ public class Bestelbon {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
     }
 
     public LocalDate getStartDatum() {

@@ -107,7 +107,8 @@ public class ConsultantController {
         return akkoordOption.flatMap(akkoord -> {
             Optional<Opdracht> opdrachtOption = Optional.ofNullable(opdrachtRepository.findOne(akkoord.getOpdrachtId()));
             return opdrachtOption.map(opdracht -> {
-                List<Bestelbon> bestelbonnen = bestelbonRepository.findByProjectCode(akkoord.getProjectCode());
+                //Changed to findByAkkoordId
+                List<Bestelbon> bestelbonnen = bestelbonRepository.findByAkkoordId(akkoord.getId());
                 return new AkkoordAggregate(akkoord, opdracht, bestelbonnen);
             });
         });
