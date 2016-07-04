@@ -41,8 +41,6 @@ public class ConsultantController {
         LOG.debug("GET /consultants getAllConsultants() called!");
 
         List<Consultant> orderedConsultants = consultantRepository.findAll().stream()
-                .sorted((o1, o2) -> o1.getFamilieNaam().compareTo(o2.getFamilieNaam()))
-                .sorted(((o1, o2) -> o1.getVoorNaam().compareTo(o2.getVoorNaam())))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(orderedConsultants, HttpStatus.OK);
@@ -63,8 +61,6 @@ public class ConsultantController {
     @RequestMapping(method = RequestMethod.GET, value = "/aggregated")
     public ResponseEntity<List<ConsultantAggregate>> getAllAggregatedConsultants() {
         List<ConsultantAggregate> aggregatedConsultants = consultantRepository.findAll().stream()
-                .sorted((o1, o2) -> o1.getFamilieNaam().compareTo(o2.getFamilieNaam()))
-                .sorted(((o1, o2) -> o1.getVoorNaam().compareTo(o2.getVoorNaam())))
                 .map(consultant -> {
                     return aggregateConsultant(consultant.getId());
                 }).filter(Optional::isPresent)
