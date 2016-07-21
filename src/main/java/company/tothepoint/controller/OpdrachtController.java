@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,14 +39,14 @@ public class OpdrachtController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Opdracht> createOpdracht(@RequestBody Opdracht opdracht) {
+    public ResponseEntity<Opdracht> createOpdracht(@Validated @RequestBody Opdracht opdracht) {
         LOG.debug("POST /opdrachten createOpdracht(..) called!");
         Opdracht createdOpdracht = opdrachtRepository.save(opdracht);
         return new ResponseEntity<>(createdOpdracht, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-    public ResponseEntity<Opdracht> updateOpdracht(@PathVariable("id") String id, @RequestBody Opdracht opdracht) {
+    public ResponseEntity<Opdracht> updateOpdracht(@PathVariable("id") String id, @Validated @RequestBody Opdracht opdracht) {
         LOG.debug("PUT /opdrachten/"+id+" updateOpdracht("+id+", ..) called!");
         Optional<Opdracht> existingOpdracht = Optional.ofNullable(opdrachtRepository.findOne(id));
 

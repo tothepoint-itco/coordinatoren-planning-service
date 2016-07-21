@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -87,7 +88,7 @@ public class AkkoordController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Akkoord> createAkkoord(@RequestBody Akkoord akkoord) {
+    public ResponseEntity<Akkoord> createAkkoord(@Validated @RequestBody Akkoord akkoord) {
         LOG.debug("POST /akkoorden createAkkoord(..) called!");
 
         Optional<Akkoord> validAkkoordOption = akkoordIsValid(akkoord) ? Optional.of(akkoord) : Optional.empty();
@@ -107,7 +108,7 @@ public class AkkoordController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-    public ResponseEntity<Akkoord> updateAkkoord(@PathVariable("id") String id, @RequestBody Akkoord akkoord) {
+    public ResponseEntity<Akkoord> updateAkkoord(@PathVariable("id") String id, @Validated @RequestBody Akkoord akkoord) {
         LOG.debug("PUT /akkoorden/"+id+" updateAkkoord("+id+", ..) called!");
         Optional<Akkoord> existingAkkoord = Optional.ofNullable(akkoordRepository.findOne(id));
 

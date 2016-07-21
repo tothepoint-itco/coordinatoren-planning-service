@@ -3,14 +3,21 @@ package company.tothepoint.model.bestelbon;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class Bestelbon {
     @Id
     private String id;
+
+    @NotNull(message = "bestelbon.error.akkoordid.notnull")
     private String akkoordId;
+
+    @NotNull(message = "bestelbon.error.startdatum.notnull")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
+
+    @NotNull(message = "bestelbon.error.einddatum.notnull")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate eindDatum;
 

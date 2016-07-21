@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class BestelbonController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Bestelbon> createBestelbon(@RequestBody Bestelbon bestelbon) {
+    public ResponseEntity<Bestelbon> createBestelbon(@Validated @RequestBody Bestelbon bestelbon) {
         LOG.debug("POST /bestelbonnen createBestelbon(..) called!");
         Optional<Akkoord> existingAkkoord= Optional.ofNullable(akkoordRepository.findOne(bestelbon.getAkkoordId()));
 
@@ -57,7 +58,7 @@ public class BestelbonController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-    public ResponseEntity<Bestelbon> updateBestelbon(@PathVariable("id") String id, @RequestBody Bestelbon bestelbon) {
+    public ResponseEntity<Bestelbon> updateBestelbon(@PathVariable("id") String id, @Validated @RequestBody Bestelbon bestelbon) {
         LOG.debug("PUT /bestelbonnen/"+id+" updateBestelbon("+id+", ..) called!");
         Optional<Bestelbon> existingBestelbon = Optional.ofNullable(bestelbonRepository.findOne(id));
         return existingBestelbon.map(bu ->

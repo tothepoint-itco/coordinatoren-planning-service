@@ -3,17 +3,32 @@ package company.tothepoint.model.opdracht;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class Opdracht {
     @Id
     private String id;
 
+    @NotNull(message = "opdracht.error.locatie.notnull")
+    @Size(min = 1, message = "opdracht.error.locatie.notnull")
     private String locatie;
+
     private String tarief;
+
+    @NotNull(message = "opdracht.error.accountmanager.notnull")
+    @Size(min = 1, message = "opdracht.error.accountmanager.notnull")
     private String accountManager;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDatum;
+
+    @NotNull(message = "opdracht.error.klant.notnull")
+    @Size(min = 1, message = "opdracht.error.klant.notnull")
     private String klant;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate deadline;
     private String info;
 

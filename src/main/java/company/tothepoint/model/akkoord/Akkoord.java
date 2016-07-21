@@ -4,19 +4,32 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class Akkoord {
     @Id
     private String id;
 
+    @NotNull(message = "akkoord.error.projectcode.notnull")
+    @Size(min = 1, message = "akkoord.error.projectcode.notnull")
     private String projectCode;
+
+    @NotNull(message = "akkoord.error.opdrachtid.notnull")
     private String opdrachtId;
+
+    @NotNull(message = "akkoord.error.consultantid.notnull")
     private String consultantId;
+
     private String bezettingsGraad;
 
-
+    @NotNull(message = "akkoord.error.informeeleinddatum.notnull")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelEindDatum;
+
+    @NotNull(message = "akkoord.error.informeelstartdatum.notnull")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate informeelStartDatum;
 
     public Akkoord() {
